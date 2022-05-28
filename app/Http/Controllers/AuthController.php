@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Auth;
 use Illuminate\Http\Request;
+use App\Http\Requests\RegiserRequest;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -34,4 +36,33 @@ class AuthController extends Controller
         ], 401);
 
     } // end method
+
+
+    public function Register(RegiserRequest $request){
+
+    	try{
+
+    		$user = User::create([
+    			'name' => $request->name,
+    			'email' => $request->email,
+    			'password' => Hash::make($request->password)
+    		]);
+    		$token = $user->createToken('app')->accessToken;
+
+    		return response([
+    			'message' => "Registration Successfull",
+    			'token' => $token,
+    			'user' => $user
+    		],200);
+
+	    	}catch(Exception $exception){
+	    		return response([
+	    			'message' => $exception->getMessage()
+	    		],400);
+	    	}
+
+
+
+
+    } // end mehtod
 }
